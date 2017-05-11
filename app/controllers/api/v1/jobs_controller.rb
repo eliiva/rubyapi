@@ -6,7 +6,7 @@ class Api::V1::JobsController < ApplicationController
     else
       @jobs = Job.all
     end
-    render json: {jobs: @jobs}, exept: [:id, :created_at, :updated_at]
+    render json: {jobs: @jobs}, except: [:id, :created_at, :updated_at]
   end
 
   def show

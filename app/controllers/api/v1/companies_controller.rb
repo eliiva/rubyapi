@@ -2,7 +2,7 @@ class Api::V1::CompaniesController < ApplicationController
   before_action :set_company, only: [:show, :update, :destroy]
   def index
     @companies = Company.all
-    render json: {companies: @companies}, exept: [:id, :created_at, :updated_at]
+    render json: {companies: @companies}, except: [:id, :created_at, :updated_at]
   end
 
   def show
@@ -33,6 +33,30 @@ class Api::V1::CompaniesController < ApplicationController
     end
   end
 
+  def add_deleted_status
+    @company = Company.find(params[:company_id])
+
+    puts "deleted: @company - #{@company}"
+
+    if @company.deleted_status
+      puts "deleted_status: "
+      render json: {
+          deleted_company: [],
+          deleted_already: :not_modified,
+      }
+    else
+      @company.delete_company
+      puts "NOT deleted: "
+      render json: {
+          deleted_company: @company,
+          code: 200,
+          status: :success,
+      }, except: [:created_at, :updated_at]
+    end
+    #удалена ли запись?
+    #если не удалена, пометить
+  end
+
   private
   def set_company
     @company = Company.find(params[:id])
@@ -41,4 +65,6 @@ class Api::V1::CompaniesController < ApplicationController
   def company_params
     params.permit(:location, :name, :id)
   end
+
 end
+
